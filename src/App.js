@@ -223,8 +223,8 @@ class App extends Component {
 
     mc.on("swipedown", ev => this.decrementDimension())
       .on("swipeup", ev => this.incrementDimension())
-      .on("pinchin", ev => this.decrementDimension())
-      .on("pinchout", ev => this.incrementDimension())
+      .on("pinchin", ev => this.incrementDimension())
+      .on("pinchout", ev => this.decrementDimension())
   }
 
   handleKeydown (ev) {
