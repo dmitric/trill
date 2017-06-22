@@ -16,7 +16,7 @@ class App extends Component {
       forwardColor: 'black',
       reverseColor: '#7E7B8A',
       chance: 0.5,
-      dimension: 13,
+      dimension: 9,
       padding: 120,
       width: 500,
       height: 500,
@@ -57,27 +57,38 @@ class App extends Component {
 
   generateTriangles() {
     const triangles = []
-    // eslint-disable-next-line
+
     const actualHeight = this.actualHeight()
     const actualWidth = this.actualWidth()
 
-    const a = actualWidth/this.state.dimension
+    const a = actualHeight/this.state.dimension
     const r = (a) * (Math.sqrt(3))/3.
     const h = (a) * (Math.sqrt(3))/2.
 
+    const colDim = Math.floor(actualWidth/h)
+
     for (let row=0; row < this.state.dimension-1; row ++) {
-      for (let col=0; col < this.state.dimension; col++) {
-        let y = (row+0.5)*a
-        let x = (col+0.5)*h
+      for (let col=0; col < colDim; col++) {
+        const y = (row+0.5)*a
+        const x = (col+0.5)*h
         const points = this.polygon(x, y, r, 3)
         const pointString = this.generatePointString(points)
         const isBackwards = Math.random() < this.state.chance
+        
         if (isBackwards) {
-          triangles.push(<polygon key={`${x}-${y}`} stroke='none'
-            transform={`${ col % 2 !== 0 ? '': `translate(0 ${a/2})`}rotate(270 ${x} ${y})`} points={pointString} fill={this.state.reverseColor} />)
+          triangles.push(
+            <polygon key={`${x}-${y}`}
+              stroke='none'
+              transform={`${ col % 2 !== 0 ? '': `translate(0 ${a/2})`}rotate(270 ${x} ${y})`}
+              points={pointString} fill={this.state.reverseColor} />
+          )
         } else {
-          triangles.push(<polygon key={`${x}-${y}`} stroke='none'
-            transform={`${ col % 2 !==0 ? '': `translate(0 ${a/2})`}rotate(90 ${x} ${y})`} points={pointString} fill={this.state.forwardColor} />)
+          triangles.push(
+            <polygon key={`${x}-${y}`}
+              stroke='none'
+              transform={`${ col % 2 !==0 ? '': `translate(0 ${a/2})`}rotate(90 ${x} ${y})`} 
+              points={pointString} fill={this.state.forwardColor} />
+          )
         }
       }
     }
@@ -110,23 +121,6 @@ class App extends Component {
     }
 
     return coordinates
-  }
-
-  linksFromPoints(points) {
-    const tracker = {}
-    const links = []
-
-    for (let i=0; i < points.length; i++) {
-      for (let j=0; j < points.length; j++) {
-        // don't self link, and we only need one link between each pair
-        if (j !== i && (tracker[`${i}-${j}`] === undefined && tracker[`${j}-${i}`] === undefined)) {
-          tracker[`${i}-${j}`] = true
-          links.push([points[i], points[j]])
-        }  
-      }
-    }
-
-    return links
   }
 
   between (min, max) {
@@ -176,7 +170,7 @@ class App extends Component {
         <div style={{ padding: this.state.padding }}> 
           <svg width={actualWidth} height={actualHeight} style={{ overflow: 'none' }}>
             <rect width={"100%"} height={"100%"}  fill={this.state.backgroundColor} />
-            <g transform={`translate(${a-h} 0)`}>
+            <g transform={`translate(${a-h} ${a/4})`}>
               {this.generateTriangles()}
             </g>
             <g>
