@@ -15,7 +15,7 @@ class App extends Component {
       displayColorPickers: true,
       forwardColor: 'black',
       reverseColor: '#7E7B8A',
-      chance: 0.5,
+      chance: 50,
       dimension: 9,
       padding: 120,
       width: 500,
@@ -73,7 +73,7 @@ class App extends Component {
         const x = (col+0.5)*h
         const points = this.polygon(x, y, r, 3)
         const pointString = this.generatePointString(points)
-        const isBackwards = Math.random() < this.state.chance
+        const isBackwards = 100*Math.random() < this.state.chance
         
         if (isBackwards) {
           triangles.push(
@@ -145,6 +145,14 @@ class App extends Component {
 
   incrementDimension () {
     this.setState({dimension: Math.min(30, this.state.dimension + 1) })
+  }
+
+  increaseChance () {
+    this.setState({chance: Math.min(90, this.state.chance + 5) })
+  }
+
+  decreaseChance () {
+    this.setState({chance: Math.max(10, this.state.chance - 5) })
   }
 
   render() {
@@ -223,6 +231,8 @@ class App extends Component {
 
     mc.on("swipedown", ev => this.decrementDimension())
       .on("swipeup", ev => this.incrementDimension())
+      .on("swipeleft", ev => this.increaseChance())
+      .on("swiperight", ev => this.decreaseChance())
       .on("pinchin", ev => this.incrementDimension())
       .on("pinchout", ev => this.decrementDimension())
   }
@@ -248,10 +258,10 @@ class App extends Component {
       this.incrementDimension()
     } else if (ev.which === 37) {
       ev.preventDefault()
-      //this.removeLine()
+      this.decreaseChance()
     } else if (ev.which === 39) {
       ev.preventDefault()
-      //this.addLine()
+      this.increaseChance()
     }
   }
 
