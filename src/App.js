@@ -20,7 +20,8 @@ class App extends Component {
       padding: 120,
       width: 500,
       height: 500,
-      paper: 0
+      paper: 0,
+      running: false
     }
   }
 
@@ -53,6 +54,33 @@ class App extends Component {
     }
 
     return rects
+  }
+
+  generateColor () {
+    const palette =  ["#292628", "#2966a4", "#edd035", "#e8502f", "#9a4e55", "#3b9764", "#68a5b9", "#bb98c4", "#86d052", "#aa9f52"]
+    const chance = Math.random() * 100;
+
+    if (chance >= 0 && chance < 49.5) {
+      return palette[0];
+    } else if (chance >= 49.5 && chance < 61.3) {
+      return palette[1];
+    } else if (chance >= 61.3 && chance < 69.2) {
+      return palette[2];
+    } else if (chance >= 69.2 && chance < 77.1) {
+      return palette[3];
+    } else if (chance >= 77.1 && chance < 83.9) {
+      return palette[4];
+    } else if (chance >= 83.9 && chance < 90.2) {
+      return palette[5];
+    } else if(chance >= 90.2 && chance < 94.4) {
+      return palette[6];
+    } else if(chance >= 94.4 && chance < 97.6) {
+      return palette[7];
+    } else if(chance >= 97.6 && chance < 99.2) {
+      return palette[8];
+    } else if (chance >= 99.2) {
+      return palette[9];
+    }
   }
 
   generateTriangles() {
@@ -94,6 +122,16 @@ class App extends Component {
     }
 
     return triangles
+  }
+
+  toggleRun() {
+    this.setState({running: !this.state.running})
+  }
+
+  tick () {
+    if (this.state.running) {
+      this.forceUpdate()
+    }
   }
 
   generatePointString(points) {
@@ -218,11 +256,13 @@ class App extends Component {
   componentWillUnmount () {
     window.removeEventListener("resize", this.updateDimensions.bind(this), true)
     window.removeEventListener('keydown', this.handleKeydown.bind(this), true)
+    window.clearInterval(this.interval)
   }
 
   componentDidMount () {
     window.addEventListener("resize", this.updateDimensions.bind(this), true)
     window.addEventListener('keydown', this.handleKeydown.bind(this), true)
+    this.interval = window.setInterval(this.tick.bind(this), 400)
 
     const mc = new Hammer(document, { preventDefault: true })
 
@@ -250,6 +290,9 @@ class App extends Component {
     } else if (ev.which === 80 && !(ev.metaKey || ev.ctrlKey)) {
       ev.preventDefault()
       this.togglePaper()
+    } else if (ev.which === 84) {
+      ev.preventDefault()
+      this.toggleRun()
     } else if (ev.which === 40) {
       ev.preventDefault()
       this.decrementDimension()
